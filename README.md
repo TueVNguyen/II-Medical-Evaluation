@@ -76,12 +76,12 @@ Example Usage:
 
 ```
 python medical.py \
-    --system-prompt "You are a helpful medical assistant." \
     --output-dir results_run1 \
     --num-rollouts 1 \
     --batch-size 32
 ```
 
+Note: Default parameters were used for all models.
 
 ## Output Files
 
