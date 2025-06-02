@@ -57,6 +57,27 @@ pip install pandas datasets tqdm numpy openai nest_asyncio sglang
 2. Install Dependencies: As listed above.
 3. SGLang Server: Ensure an SGLang server is running and accessible. This server should be configured to serve the desired LLM.
 
+**Start sglang server**
+
+```bash
+# The conda env in slurm cluster: sglang, you can use it.
+conda activate sglang
+model_path=...
+python -m sglang.launch_server \
+        --model $model_path \
+        --trust-remote-code \
+        --port $port \
+        --host $host \
+        --tp 4 \
+        --dp 2 \
+        --context-length 131072\
+        --dtype bfloat16 \
+        --mem-fraction-static 0.9 \
+        --max-running-requests 256
+```
+
+**Start benchmark**
+
 bash
 ```
 python medical.py [OPTIONS]
