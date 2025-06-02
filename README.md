@@ -15,8 +15,8 @@ This script is designed to evaluate the performance of Large Language Models (LL
     * `tuenguyen/Medical-Eval-MedBullets_op5`
     * `tuenguyen/Medical-Eval-NEJM`
     * `tuenguyen/MedXpertQA`
-    * `II-Vietnam/MMLU_test` (relevant medical subset if applicable, or general)
-    * `II-Vietnam/AFRIMEDQA_test`
+    * `II-Vietnam/MMLU_test` (Addition benchmark to check general performance)
+    * `II-Vietnam/AFRIMEDQA_test` (New benchmark)
 * **Efficient Inference**: Utilizes SGLang for running model inference, allowing for batch processing and optimized performance. (Requires an SGLang-compatible backend server).
 * **Answer Extraction**: Implements multiple strategies for extracting answers from model responses:
     * Parsing content within LaTeX `\boxed{...}` commands.
