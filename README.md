@@ -65,7 +65,7 @@ Command-Line Arguments:
 --post-fix-prompt TEXT: Text appended after the question and options in the user prompt. (Default: "Please reason step by step, and put your final answer within \\boxed{}.")
 --temperature FLOAT: Sampling temperature for generation. (Default: 0.6)
 --top-p FLOAT: Nucleus sampling top_p value. (Default: 0.9)
---max-tokens INT: Maximum number of tokens to generate per response. (Default: 4096)
+--max-tokens INT: Maximum number of tokens to generate per response. (Default: 30768)
 --output-dir TEXT: Directory where results and logs will be saved. (Default: "data")
 --batch-size INT: Batch size for SGLang requests (effectively max_pending_requests). (Default: 64)
 --num-rollouts INT: Number of times to run the evaluation for each dataset. (Default: 1)
