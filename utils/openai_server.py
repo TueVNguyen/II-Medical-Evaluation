@@ -62,6 +62,7 @@ class OpenAIServerManager:
                         p = True
                         kwargs['prompt'] = messages
                         kwargs.pop('messages')
+                        # print(kwargs)
                         out  = await client.completions.create(
                             **kwargs
                         )
@@ -100,7 +101,9 @@ class OpenAIServerManager:
 
         for i, chat in enumerate(chats):
             curr_kwargs = kwargs.copy()
-            curr_kwargs["model"] = self.model_name
+            # curr_kwargs["model"] = self.model_name
+            if "model" not in curr_kwargs:
+                curr_kwargs["model"] = self.model_name
             curr_kwargs["messages"] = chat
             if "max_tokens" not in curr_kwargs:
                 curr_kwargs["max_tokens"] = (

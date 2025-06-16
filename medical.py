@@ -37,7 +37,7 @@ DEFAULT_TOP_P: float = 0.9
 DEFAULT_MAX_TOKENS: int = 30768 # Adjusted from 30768 as it seemed excessively high for QA
 DEFAULT_BATCH_SIZE: int = 128 # CCU Adjusted from 512, depending on GPU, 512 can be too large
 DEFAULT_NUM_ROLLOUTS: int = 1
-DEFAULT_PORT: int = 1234 # default port for SGLang server
+DEFAULT_PORT: int = 1235 # default port for SGLang server
 DEFAULT_OUTPUT_DIR: str = "data"
 
 STOP_SEQUENCES: List[str] = ["<eos>", "<end_of_turn>", "<|im_end|>", "<|eot_id|>"] # Common stop tokens
@@ -307,20 +307,23 @@ def load_and_prepare_datasets(max_sample: int = None) -> List[Dataset]:
     # MMLU and AFRIMEDQA might have different structures
     # MMLU and AFRIMEDQA will take too long to run
     # try:
-    #     data_mmlu = load_dataset("II-Vietnam/MMLU_test")['train']
-    #     # Assuming MMLU needs 'source', 'answer_idx' if not present
-    #     # This requires knowing MMLU's structure. For now, just add source.
-    #     data_mmlu = data_mmlu.map(lambda x: {"source": "II-Vietnam/MMLU_test"})
-    #     all_datasets.append(data_mmlu)
-    # except Exception as e:
-    #     print(f"Warning: Could not load or process II-Vietnam/MMLU_test. Error: {e}")
+    # data_mmlu = load_dataset("II-Vietnam/MMLU_test")['train']
+
+    # data_mmlu = data_mmlu.map(lambda x: {"source": "II-Vietnam/MMLU_test"})
+    # all_datasets.append(data_mmlu)
+ 
+    # data_afrimedqa = load_dataset("II-Vietnam/AFRIMEDQA_test")['train']
+    # data_afrimedqa = data_afrimedqa.map(lambda x: {"source": "II-Vietnam/AFRIMEDQA_test"})
+    # all_datasets.append(data_afrimedqa)
     
-    # try:
-    #     data_afrimedqa = load_dataset("II-Vietnam/AFRIMEDQA_test")['train']
-    #     data_afrimedqa = data_afrimedqa.map(lambda x: {"source": "II-Vietnam/AFRIMEDQA_test"})
-    #     all_datasets.append(data_afrimedqa)
-    # except Exception as e:
-    #     print(f"Warning: Could not load or process II-Vietnam/AFRIMEDQA_test. Error: {e}")
+    # data_vn = load_dataset("II-Vietnam/Medical-VN-Benchmark")['train']
+    # data_vn = data_vn.map(
+    #     lambda x: {
+    #         "source": "II-Vietnam/Medical-VN-Benchmark",
+    #         "answer_idx": x['answer'].upper()
+    #     }
+    # )
+    # all_datasets.append(data_vn)
 
 
     # Reverse order as in original script, though unclear if necessary
@@ -338,6 +341,12 @@ def convert_options_to_str(options_dict: Dict[str, str]) -> str:
     return "\n".join([f"{k}. {options_dict[k]}" for k in sorted_keys])
 
 
+def prepare_option(options: List[str]) -> Dict[str, str]:
+    if isinstance(options, list):
+        options_dict = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[k]: v for k, v in enumerate(options)}
+        return options_dict
+    return options
+
 def prepare_prompts(dataset: Dataset, system_prompt: Optional[str], post_fix_prompt: str) -> List[List[Dict[str, str]]]:
     """
     Prepares a list of prompts in chat format for the SGLang server.
@@ -354,7 +363,8 @@ def prepare_prompts(dataset: Dataset, system_prompt: Optional[str], post_fix_pro
     for row in dataset:
         question = row.get('question', '')
         options_dict = row.get('options', {}) # options should be a dict like {"A": "text", ...}
-
+        if isinstance(options_dict, list):
+            options_dict = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"[k]: v for k, v in enumerate(options_dict)}
         # Ensure options_dict is a dictionary before processing
         if not isinstance(options_dict, dict):
             options_str = "" # Or handle as an error/skip
@@ -426,7 +436,8 @@ async def process_dataset_rollout(
             temperature=config["temperature"],
             top_p=config["top_p"],
             max_tokens=config["max_tokens"],
-            stop=STOP_SEQUENCES
+            stop=STOP_SEQUENCES,
+            model=config["actual_model_name"]
         )
         # Extract the actual response string
         raw_responses = [str(r[-1]["responses"][0]) if r and r[-1].get("responses") else "<ERROR_NO_RESPONSE>" for r in api_responses]
@@ -441,7 +452,7 @@ async def process_dataset_rollout(
     # Default to "A" or empty string if 'answer_idx' or 'options' are missing.
     # This is crucial for robust processing of diverse datasets.
     answer_indices = [row['answer_idx'] for row in dataset]
-    options_list = [row['options'] for row in dataset]
+    options_list = [prepare_option(row['options']) for row in dataset]
 
     extracted_answers_boxed = [get_last_boxed(r) for r in raw_responses]
     extracted_answers_lenient_boxed = [extract_boxed_text_lenient(r) for r in raw_responses]
@@ -467,7 +478,7 @@ async def process_dataset_rollout(
 
 
     results_df = pd.DataFrame({
-        "problem_prompt": [p[0]['content'] if p else "" for p in prompts], # Assuming single turn user prompt
+        "problem_prompt": [p[len(p)-2]['content'] if p else "" for p in prompts], # Assuming single turn user prompt
         "raw_response": raw_responses,
         "extracted_answer_get_last_boxed": extracted_answers_boxed,
         "extracted_answer_extract_boxed_text": extracted_answers_lenient_boxed,
@@ -538,8 +549,8 @@ async def run_evaluation(config: Dict[str, Any]):
         except Exception as e:
             print(f"Warning: Could not get model name from server. Error: {e}")
             config["actual_model_name"] = "Unknown (Failed to fetch)"
-
-
+        server_handler.model_name = config["actual_model_name"]
+        # Get the model name from the config
         current_run_metrics: Dict[str, float] = {} # Metrics for the current overall run (averaged over sources)
 
         for rollout_num in range(config["num_rollouts"]):
@@ -585,7 +596,7 @@ async def run_evaluation(config: Dict[str, Any]):
                 rollout_summary_metrics["reward_get_last_boxed"].append(df_results["reward_get_last_boxed"].mean())
                 rollout_summary_metrics["reward_extract_boxed_text"].append(df_results["reward_extract_boxed_text"].mean())
                 rollout_summary_metrics["reward_huatuo"].append(df_results["reward_huatuo"].mean())
-
+                print(aggregated_metrics_per_source)
             # Print summary for the completed rollout
             print(f"\n--- Summary for Rollout {rollout_num + 1} (Excluding MMLU & AFRIMEDQA from average) ---")
             for metric_name, scores_list in rollout_summary_metrics.items():
@@ -619,11 +630,11 @@ async def run_evaluation(config: Dict[str, Any]):
             # Normalize source name for checking exclusion
             norm_source_name = source_name.replace("_test","").replace("_validation","")
                             
-            if norm_source_name not in ["MMLU", "AFRIMEDQA", "Medical-Eval-MMLU-Pro_Medical", "AFRIMEDQA"]: # Add variations
-                for metric_key in overall_avg_metrics.keys():
-                    mean_metric_val = source_metrics.get(f"mean_{metric_key}")
-                    if isinstance(mean_metric_val, float): # Check if it's a valid float
-                         overall_avg_metrics[metric_key].append(mean_metric_val)
+            # if norm_source_name not in ["MMLU", "AFRIMEDQA", "Medical-Eval-MMLU-Pro_Medical", "AFRIMEDQA"]: # Add variations
+            for metric_key in overall_avg_metrics.keys():
+                mean_metric_val = source_metrics.get(f"mean_{metric_key}")
+                if isinstance(mean_metric_val, float): # Check if it's a valid float
+                    overall_avg_metrics[metric_key].append(mean_metric_val)
         
         final_metrics_output["overall_average"] = {}
         print("\n--- Overall Evaluation Summary (Averaged across rollouts and specified sources) ---")

@@ -75,6 +75,7 @@ class SGLangServerManager(OpenAIServerManager):
                     continue
                 try:
                     url=self.url
+                    model_name = self.get_model_name()
                     get_sglang_response(port, url, model_name)
                     ports_working.append(port)
                 except (openai.APITimeoutError, openai.APIConnectionError) as err:
