@@ -265,15 +265,15 @@ def load_and_prepare_datasets(max_sample: int = None) -> List[Dataset]:
     """
     print("Loading and preparing datasets...")
     list_of_ds_names = [
-        "tuenguyen/Medical-Eval-MedMCQA_validation",
-        "tuenguyen/Medical-Eval-MedQA_USLME_test",
-        "tuenguyen/Medical-Eval-PubMedQA_test",
-        "tuenguyen/Medical-Eval-MMLU-Pro_Medical_test",
-        "tuenguyen/Medical-Eval-GPQA_Medical_test",
-        "tuenguyen/Medical-Eval-Lancet",
-        "tuenguyen/Medical-Eval-MedBullets_op4",
-        "tuenguyen/Medical-Eval-MedBullets_op5",
-        "tuenguyen/Medical-Eval-NEJM"
+        "meoconxinhxan/Medical-Eval-MedMCQA_validation",
+        "meoconxinhxan/Medical-Eval-MedQA_USLME_test",
+        "meoconxinhxan/Medical-Eval-PubMedQA_test",
+        "meoconxinhxan/Medical-Eval-MMLU-Pro_Medical_test",
+        "meoconxinhxan/Medical-Eval-GPQA_Medical_test",
+        "meoconxinhxan/Medical-Eval-Lancet",
+        "meoconxinhxan/Medical-Eval-MedBullets_op4",
+        "meoconxinhxan/Medical-Eval-MedBullets_op5",
+        "meoconxinhxan/Medical-Eval-NEJM"
     ]
     
     all_datasets = []
@@ -288,7 +288,7 @@ def load_and_prepare_datasets(max_sample: int = None) -> List[Dataset]:
             print(f"Warning: Could not load or process {ds_name}. Error: {e}")
 
     try:
-        medexpert_qa = load_dataset("tuenguyen/MedXpertQA")['test']
+        medexpert_qa = load_dataset("meoconxinhxan/MedXpertQA")['test']
         medexpert_qa = medexpert_qa.map(
             lambda x: {
                 "question": x['question'].split("Answer Choices:")[0].strip(),

@@ -29,15 +29,15 @@ EVALUATION_DATASETS = {
         "eval_columns": ["problem"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/eval_math_olympiadbench":{
+    "meoconxinhxan/eval_math_olympiadbench":{
         "eval_columns": ["problem"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/eval_math_minerva_math":{
+    "meoconxinhxan/eval_math_minerva_math":{
         "eval_columns": ["problem"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/eval_math_gaokao2023en":{
+    "meoconxinhxan/eval_math_gaokao2023en":{
         "eval_columns": ["problem"],
         "eval_splits": ["train"],
     },
@@ -75,7 +75,7 @@ EVALUATION_DATASETS = {
         "eval_splits": ["train"],
         "eval_subset": "gpqa_main",
     },
-    "tuenguyen/eval_math_amc23":{
+    "meoconxinhxan/eval_math_amc23":{
         "eval_columns": ["problem"],
         "eval_splits": ["train"],
     },
@@ -91,55 +91,55 @@ EVALUATION_DATASETS = {
         "eval_columns": ["question"],
         "eval_splits": ["test"],
     },
-    "tuenguyen/eval_code_mpbb":{
+    "meoconxinhxan/eval_code_mpbb":{
         "eval_columns": ["text"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/Medical-Eval-GPQA_Medical_test":{
+    "meoconxinhxan/Medical-Eval-GPQA_Medical_test":{
         "eval_columns": ["question"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/Medical-Eval-PubMedQA_test":{
+    "meoconxinhxan/Medical-Eval-PubMedQA_test":{
         "eval_columns": ["question"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/Medical-Eval-MedMCQA_validation":{
+    "meoconxinhxan/Medical-Eval-MedMCQA_validation":{
         "eval_columns": ["question"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/Medical-Eval-HumanityLastExam":{
+    "meoconxinhxan/Medical-Eval-HumanityLastExam":{
         "eval_columns": ["question"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/Medical-Eval-MedBullets_op5":{
+    "meoconxinhxan/Medical-Eval-MedBullets_op5":{
         "eval_columns": ["question"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/Medical-Eval-NEJM":{
+    "meoconxinhxan/Medical-Eval-NEJM":{
         "eval_columns": ["question"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/Medical-Eval-MedXpertQA":{
+    "meoconxinhxan/Medical-Eval-MedXpertQA":{
         "eval_columns": ["question"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/Medical-Eval-MedBullets_op4":{
+    "meoconxinhxan/Medical-Eval-MedBullets_op4":{
         "eval_columns": ["question"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/Medical-Eval-Lancet":{
+    "meoconxinhxan/Medical-Eval-Lancet":{
         "eval_columns": ["question"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/Medical-Eval-MMLU-Pro_Medical_test":{
+    "meoconxinhxan/Medical-Eval-MMLU-Pro_Medical_test":{
         "eval_columns": ["question"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/Medical-Eval-MedQA_USLME_test":{
+    "meoconxinhxan/Medical-Eval-MedQA_USLME_test":{
         "eval_columns": ["question"],
         "eval_splits": ["train"],
     },
-    "tuenguyen/MedXpertQA":{
+    "meoconxinhxan/MedXpertQA":{
         "eval_columns": ["question"],
         "eval_splits": ["test"],
     }
