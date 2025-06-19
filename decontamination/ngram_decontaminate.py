@@ -59,6 +59,15 @@ def build_ngram_lookup(documents: list[str], ngram_size: int = 8) -> dict[str, s
             lookup[ngram].add(doc_id)
 
     return lookup
+def load_health_bench():
+    ds = load_dataset("II-Vietnam/II-Medical-8B-V2-Health-Bench-V3", split="train")
+    def format_problem(row):
+        prompt = row["prompt"]
+        return "\n".join(
+            f['content'] for f in prompt
+        )
+    ds = ds.map(lambda x: {"problem_formated": format_problem(x)}, num_proc=128)
+    return ds
 
 def clean_problem(problem):
     problem = problem.replace("Return your final response as 'Final Answer: \\boxed{<answer>}', where <answer> is the number or mathematical expression of the solution.", "")
@@ -260,7 +269,11 @@ if __name__ == "__main__":
         "tuenguyen/Medical-Eval-MedQA_USLME_test-2":(
             get_v2_dataset(load_dataset("tuenguyen/Medical-Eval-MedQA_USLME_test", split="train")),
             "problem_formated"
-        )
+        ),
+        # "II-Vietnam/II-Medical-8B-V2-Health-Bench-V3":(
+        #     load_health_bench(),
+        #     "problem_formated"
+        # )
         
     }
     try:
